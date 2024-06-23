@@ -13,6 +13,8 @@
     "@coinbase/waas-sdk-viem": "^3.0.2",
     "@coinbase/waas-sdk-web": "^3.3.2",
     "@coinbase/waas-sdk-web-react": "^3.2.2",
+    "@stripe/crypto": "^0.0.4",
+    "@stripe/stripe-js": "^3.5.0",
     "permissionless": "^0.1.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
