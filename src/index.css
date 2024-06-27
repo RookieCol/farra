@@ -32,3 +32,12 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer components {
+  .ticket-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
