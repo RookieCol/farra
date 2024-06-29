@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import  { useCallback, useEffect, useState } from 'react'
 
 
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import { loadStripeOnramp } from '@stripe/crypto';
+import Navbar from '@/components/Navbar';
+import SDFGeometry from '@/components/SDFGeometry';
 
 // Make sure to call loadStripeOnramp outside of a component’s render to avoid
 // recreating the StripeOnramp object on every render.
@@ -58,7 +60,13 @@ function Home() {
 
 
     return (
-    <div>home</div>
+    <main className='min-h-svh flex flex-col'>
+      <Navbar />
+      <section className='grow flex flex-col justify-center items-center'>
+      <SDFGeometry />
+        <h1 className='text-xl font-orbitron font-semibold'>Tokenizing one event at a time</h1>
+      </section>
+    </main>
   )
 }
 
