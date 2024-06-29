@@ -4,17 +4,18 @@ import {nextui} from "@nextui-org/react";
 const config: Config = {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./src/*/.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/*/.{js,ts,jsx,tsx}",
 
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'orbitron': ['Orbitron Variable', 'sans-serif']
+      }
     }
   },
   darkMode: "class",
   plugins: [nextui()],
 };
 export default config;
-
-

@@ -3,6 +3,7 @@ import App from './App.tsx'
 import './index.css'
 import { WalletProvider } from "@coinbase/waas-sdk-web-react";
 import { NextUIProvider } from '@nextui-org/react';
+import '@fontsource-variable/orbitron';
 
 const PROJECT_ID = import.meta.env.VITE_PROJECT_ID;
 
