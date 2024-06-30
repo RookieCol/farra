@@ -1,10 +1,11 @@
 import { Button } from '@nextui-org/react'
 import React from 'react'
-import { OnrampElement } from './StripeFiat'
 import { useCallback, useEffect, useState } from 'react'
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import { loadStripeOnramp } from '@stripe/crypto';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+
 
 const stripeOnrampPromise = loadStripeOnramp(
     "pk_test_51Hjzj6H0FO59ioJ3X5qXYwDqGuRsSCWD8bMYJGthOw6Xi24DzlMBLIjFVZfLpeoPuk2SqB7uYZN0Lymci50P9P1400eUytv3lz"
@@ -14,6 +15,8 @@ function
     PayWithFiat() {
     const [clientSecret, setClientSecret] = useState("");
     const [message, setMessage] = useState("");
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
 
     useEffect(() => {
         // Fetches an onramp session and captures the client secret
@@ -57,19 +60,27 @@ function
 
     return (
         <>
-            <Button>Pay with Fiat</Button>
-            <CryptoElements stripeOnramp={stripeOnrampPromise}>
-                {clientSecret && (
-                    <OnrampElement
-                        id="onramp-element"
-                        clientSecret={clientSecret}
-                        appearance={{ theme: "dark" }}
-                        onChange={onChange}
-                        onReady={() => { }}
-                    />
-                )}
-            </CryptoElements>
-            {message && <div id="onramp-message">{message}</div>}
+            <Button onPress={onOpen}>Pay with Fiat</Button>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent className='bg-[#1A1B25]'>
+                    {(onClose) => (
+                        <>
+                                <CryptoElements stripeOnramp={stripeOnrampPromise}>
+                                    {clientSecret && (
+                                        <OnrampElement
+                                            id="onramp-element"
+                                            clientSecret={clientSecret}
+                                            appearance={{ theme: "dark" }}
+                                            onChange={onChange}
+                                            onReady={() => { }}
+                                        />
+                                    )}
+                                </CryptoElements>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
         </>
     )
 }

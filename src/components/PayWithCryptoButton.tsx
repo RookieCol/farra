@@ -1,14 +1,26 @@
 import useSmartAccountClient from '@/hooks/useGasless'
 import useSpendance from '@/hooks/useSpendance'
-import { Button } from '@nextui-org/react'
-import { createPublicClient, encodeFunctionData, http, parseEther, zeroAddress } from 'viem'
+import { Address } from '@coinbase/onchainkit/identity'
+import { toViem } from '@coinbase/waas-sdk-viem'
+import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
+import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
+import { Copy } from 'lucide-react'
+import { useState } from 'react'
+import { createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, http, parseEther, parseUnits, zeroAddress } from 'viem'
 import { baseSepolia } from 'viem/chains'
 
 function PayWithCryptoButton() {
+    const [isLoading, setIsLoading] = useState(false)
+    const [hash, setHash] = useState<Address>(zeroAddress)
+    const [email, setEmail] = useState<null | string>(null)
+    const [isEmailLoading, setIsEmailLoading] = useState(false)
     const { smartAccountClient } = useSmartAccountClient()
     const { wallet } = useWalletContext()
+
     const address = useEVMAddress(wallet)
-    const { spendance } = useSpendance(address)
+    const { spendance } = useSpendance(address?.address ?? zeroAddress)
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     const handleClaimTicket = async () => {
         const ABI = [
             "function ownerOf(uint tokenId) view returns (address)",
@@ -24,33 +36,38 @@ function PayWithCryptoButton() {
                 abi: ABI,
                 functionName: 'claim',
                 args: [
-                    zeroAddress,
-                    0,
-                    zeroAddress,
-                    0
-
+                    address,
+                    1,
+                    '1000000',
+                    [
+                        [
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"
+                        ],
+                        "100000",
+                        "1000000",
+                        "0x036cbd53842c5426634e7929541ec2318f3dcf7e"
+                    ]
                 ]
             })
         })
-        console.debug(tx)
+        console.debug(tx)(tx)
+        setHash(tx)
         return tx
 
     }
     const handleApproveToken = async () => {
-        const ABI = [
-            "function approve(address spender, uint256 amount) returns (bool)",
-        ]
+        s
         const contractAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
         const tx = await smartAccountClient?.sendTransaction({
             account: smartAccountClient.account,
             to: contractAddress,
             value: BigInt(0),
             data: encodeFunctionData({
-                abi: ABI,
+                abi: erc20Abi,
                 functionName: 'approve',
                 args: [
                     '0xFf28015E395aD24EFAA1f0Ea33Bb409B043a0bea',
-                    parseEther('100')
+                    parseUnits('100', 6)
                 ]
             })
         })
@@ -63,19 +80,81 @@ function PayWithCryptoButton() {
             chain: baseSepolia,
             transport: http(),
         });
+        setIsLoading(true)
         if (spendance < 1) {
             const approveHash = await handleApproveToken()
             publicClient.waitForTransactionReceipt({ hash: approveHash!, confirmations: 1 })
             const claimHash = await handleClaimTicket()
             publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
-        }else{
+        } else {
             const claimHash = await handleClaimTicket()
             publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
         }
+
+        setIsLoading(false)
+        onOpen()
+    }
+    const handleCloseModal = async (onClose: () => void) => {
+        setIsEmailLoading(true)
+        await fetch('http://localhost:8080/send-ticket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                customer_email: email
+            })
+
+        })
+        onClose();
     }
 
     return (
-        <Button onClick={handleClickButton}>Pay with Crypto</Button>
+        <>
+
+            <Button isLoading={isLoading} onClick={handleClickButton}>Pay with Crypto</Button>
+            <Modal
+                backdrop="opaque"
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                radius="lg"
+                classNames={{
+                    body: "py-6",
+                    backdrop: "bg-black/50 backdrop-opacity-40",
+                    base: "border-black bg-black dark:bg-black text-white",
+                    header: "border-b-[1px] border-white/20",
+                    footer: "border-t-[1px] border-white/20",
+                    closeButton: "hover:bg-white/5 active:bg-white/10",
+                }}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Congratulations!</ModalHeader>
+                            <ModalBody className='text-center'>
+                                <p>You have claimed your ticket, it should sent to your
+                                    email address.
+                                </p>
+                                <Input className='email-input' value={email ?? undefined} onChange={(e) => setEmail(e.target.value)} variant='underlined' type="email" label="Email" placeholder="Enter your email" />
+
+                                <div className='flex gap-1 justify-center items-center cursor-pointer font-light'>
+                                    <Copy size='14' />
+                                    <p className='text-inherit font-light'>
+                                        {hash.slice(0, 6)}...{hash.slice(-4)}
+                                    </p>
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+
+                                <Button isLoading={isEmailLoading} fullWidth color='primary' variant='flat' onPress={() => handleCloseModal(onClose)}>
+                                    Cheers!
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </>
 
     )
 }

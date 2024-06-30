@@ -43,4 +43,7 @@ body {
   .bg-foreground-card{
     background-color: hsl(240, 5.88%, 20%) 
   }
+  .email-input input {
+    color: white !important;
+  }
 }
