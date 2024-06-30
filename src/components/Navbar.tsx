@@ -25,7 +25,7 @@ export default function Navbar() {
 function ResponsiveMenu() {
     return (
         <ul className="flex items-center gap-10 md:gap-4 flex-col md:flex-row">
-            <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href=""><Ticket />  Events</a></li>
+            <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href="/ticket"><Ticket />  Events</a></li>
             <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href=""><CalendarDays />  Calendar</a></li>
             <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href=""><Compass />  Discover</a></li>
             <li><button>Connect Wallet</button></li>

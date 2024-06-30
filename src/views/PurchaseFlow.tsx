@@ -4,14 +4,16 @@ import React from 'react'
 
 function PurchaseFlow() {
     return (
-        <section className='flex justify-center items-center'>
-        <div className='ticket-container max-w-[60vw]'>
-            <TicketSummary />
-            <div className='flex flex-col items-center '>
-                <h2 className='font-bold text-5xl'>AFK event</h2>
-            </div>
-        </div>
-        </section>
+
+            <section className='flex justify-center items-center'>
+                <div className='ticket-container max-w-[60vw]'>
+                    <TicketSummary />
+                    <div className='flex flex-col items-center '>
+                        <h2 className='font-bold text-5xl'>AFK event</h2>
+                    </div>
+                </div>
+            </section>
+
     );
 };
 

@@ -5,36 +5,42 @@ import {
 
 import PurchaseFlow from "./views/PurchaseFlow";
 import Home from "./views/Home";
+import Layout from "./Layout";
 
 
 function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <Home/>
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />
 
-    },
-    {
-      path: "/ticket",
-      element: <PurchaseFlow/>,
-    },
+        },
+        {
+          path: "/ticket",
+          element: <PurchaseFlow />,
+        },
+      ]
+    }
   ]);
 
 
- 
+
 
   return (
     <RouterProvider router={router} />
-     
-   
+
+
   );
 }
 
 export default App;
 
 
- {/* <h1>Hello world</h1>
+{/* <h1>Hello world</h1>
       <ConnectWalletButton />
       <CryptoElements stripeOnramp={stripeOnrampPromise}>
         {clientSecret && (

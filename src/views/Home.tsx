@@ -60,13 +60,11 @@ function Home() {
 
 
     return (
-    <main className='min-h-svh flex flex-col'>
-      <Navbar />
+ 
       <section className='grow flex flex-col justify-center items-center'>
       <SDFGeometry />
         <h1 className='text-xl font-orbitron font-semibold'>Tokenizing one event at a time</h1>
       </section>
-    </main>
   )
 }
 
