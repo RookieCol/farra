@@ -36,7 +36,6 @@ function ConnectWalletButton() {
     useWalletContext();
   const [buttonText, setButtonText] = useState(ButtonText.CreateWallet);
   const address = useEVMAddress(wallet);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   if (!user)
     return (
