@@ -6,9 +6,12 @@ import {
 import PurchaseFlow from "./views/PurchaseFlow";
 import Home from "./views/Home";
 import Layout from "./Layout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 
 function App() {
+  const queryClient = new QueryClient();
+
 
   const router = createBrowserRouter([
     {
@@ -30,8 +33,11 @@ function App() {
 
 
 
+
   return (
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
 
 
   );

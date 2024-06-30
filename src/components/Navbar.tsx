@@ -1,5 +1,6 @@
 import { CalendarDays, Compass, Menu, Ticket, X } from "lucide-react";
 import { useState } from "react";
+import { ConnectWalletButton } from "./ConnectWalletButton";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
@@ -28,7 +29,9 @@ function ResponsiveMenu() {
             <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href="/ticket"><Ticket />  Events</a></li>
             <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href=""><CalendarDays />  Calendar</a></li>
             <li> <a className="flex gap-1 opacity-50 hover:opacity-100 transition" href=""><Compass />  Discover</a></li>
-            <li><button>Connect Wallet</button></li>
+            <li>
+                <ConnectWalletButton />
+            </li>
         </ul>
     )
 }

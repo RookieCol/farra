@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Address, Avatar, Name } from '@coinbase/onchainkit/identity';
 
 const buttonStyles: React.CSSProperties = {
   background: 'transparent',
@@ -34,11 +36,15 @@ function ConnectWalletButton() {
     useWalletContext();
   const [buttonText, setButtonText] = useState(ButtonText.CreateWallet);
   const address = useEVMAddress(wallet);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   if (!user)
     return (
-      <button
-        style={buttonStyles}
+      <Button
+        variant='flat'
+        color='primary'
         disabled={!waas || !!user || isLoggingIn}
+        isLoading={isLoggingIn}
         onClick={async () => {
           const user = await waas!.login();
           console.debug('user', user);
@@ -52,34 +58,46 @@ function ConnectWalletButton() {
             user!.create();
           }
         }}
+        className='font-semibold'
       >
         <CoinbaseWalletLogo />
         Login
-      </button>
+      </Button>
     );
-  if (wallet)
+  if (wallet && address)
     return (
       <>
-        <div>
-          {address && <p>Your address is: {address.address}</p>}
-          {!address && <p>No wallet.</p>}
-        </div>
-        <button
-          style={buttonStyles}
+
+        <Button
+
+          variant='flat'
+          color='primary'
           onClick={async () => {
             await waas?.logout();
           }}
           disabled={!user}
+          className='font-semibold '
+
         >
-          <CoinbaseWalletLogo />
-          Logout
-        </button>
+          <Avatar address='0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9' />
+          <div >
+            <Name className='text-inherit' address='0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9' />
+            <Address className='text-inherit' address={address?.address} />
+          </div>
+
+
+        </Button>
+
       </>
     );
   return (
-    <button
-      style={buttonStyles}
+    <Button
+      variant='flat'
+      color='primary'
       disabled={!waas || !user || isCreatingWallet || !!wallet}
+      isLoading={isCreatingWallet}
+      className='font-semibold'
+
       onClick={async () => {
         // check if your user has a wallet, and restore it if they do!
         if (user!.hasWallet) {
@@ -94,7 +112,7 @@ function ConnectWalletButton() {
       <CoinbaseWalletLogo />
 
       {buttonText}
-    </button>
+    </Button>
   );
 }
 
