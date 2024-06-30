@@ -5,6 +5,7 @@ import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import { loadStripeOnramp } from '@stripe/crypto';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
 
 
 const stripeOnrampPromise = loadStripeOnramp(
@@ -16,7 +17,9 @@ function
     const [clientSecret, setClientSecret] = useState("");
     const [message, setMessage] = useState("");
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { wallet } = useWalletContext()
 
+    const address = useEVMAddress(wallet)
 
     useEffect(() => {
         // Fetches an onramp session and captures the client secret
@@ -27,7 +30,7 @@ function
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     transaction_details: {
-                        wallet_address: "0xf8b414eFD8CB72097edAb449CeAd5dB10Fc12d99",
+                        wallet_address: address?.address,
                         destination_currency: "usdc",
                         destination_currencies: ["usdc", "eth"],
                         destination_exchange_amount: "13.37",
