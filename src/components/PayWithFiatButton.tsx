@@ -24,7 +24,7 @@ function
     useEffect(() => {
         // Fetches an onramp session and captures the client secret
         fetch(
-            "http://localhost:8080/create-onramp-session",
+            "https://stripe-sessions-production.up.railway.app/create-onramp-session",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
