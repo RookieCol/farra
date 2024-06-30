@@ -1,7 +1,5 @@
 import TicketInfo from '@/components/TicketInfo';
 import TicketSummary from '@/components/TicketSummary'
-import { Avatar, AvatarGroup, Button, Card, CardBody, CardFooter, CardHeader, Divider, Image } from '@nextui-org/react'
-import React from 'react'
 
 function PurchaseFlow() {
     return (

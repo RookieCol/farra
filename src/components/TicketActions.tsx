@@ -2,6 +2,7 @@ import useUserHasNouns from '@/hooks/useUserHasNouns'
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
 import { Button, Card, CardBody, CardHeader, Chip, Divider } from '@nextui-org/react'
 import { zeroAddress } from 'viem'
+import PayWithFiat from './PayWithFiatButton'
 
 function TicketActions() {
     const { wallet } = useWalletContext()
@@ -33,8 +34,7 @@ function TicketActions() {
                 </div>
                 <Divider />
                 <div className='flex flex-col gap-2'>
-
-                    <Button>Pay with Fiat</Button>
+                    <PayWithFiat />
                     <Button>Pay with Crypto</Button>
                 </div>
             </CardBody>
@@ -61,7 +61,7 @@ function TicketActions() {
                 <Divider />
                 <div className='flex flex-col gap-2'>
 
-                    <Button>Pay with Fiat</Button>
+                    <PayWithFiat />
                     <Button>Pay with Crypto</Button>
                 </div>
             </CardBody>
