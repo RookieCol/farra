@@ -1,3 +1,4 @@
+import TicketInfo from '@/components/TicketInfo';
 import TicketSummary from '@/components/TicketSummary'
 import { Avatar, AvatarGroup, Button, Card, CardBody, CardFooter, CardHeader, Divider, Image } from '@nextui-org/react'
 import React from 'react'
@@ -5,14 +6,12 @@ import React from 'react'
 function PurchaseFlow() {
     return (
 
-            <section className='flex justify-center items-center'>
-                <div className='ticket-container max-w-[60vw]'>
-                    <TicketSummary />
-                    <div className='flex flex-col items-center '>
-                        <h2 className='font-bold text-5xl'>AFK event</h2>
-                    </div>
-                </div>
-            </section>
+        <section className='flex justify-center  w-full items-center'>
+            <div className='ticket-container gap-8 w-3/5'>
+                <TicketSummary />
+                <TicketInfo />
+            </div>
+        </section>
 
     );
 };

@@ -36,8 +36,11 @@ body {
 @layer components {
   .ticket-container{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr 2fr;
     gap: 1rem;
     padding: 1rem;
+  }
+  .bg-foreground-card{
+    background-color: hsl(240, 5.88%, 20%) 
   }
 }
