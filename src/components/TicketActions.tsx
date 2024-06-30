@@ -3,6 +3,7 @@ import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
 import { Button, Card, CardBody, CardHeader, Chip, Divider } from '@nextui-org/react'
 import { zeroAddress } from 'viem'
 import PayWithFiat from './PayWithFiatButton'
+import PayWithCryptoButton from './PayWithCryptoButton'
 
 function TicketActions() {
     const { wallet } = useWalletContext()
@@ -35,7 +36,7 @@ function TicketActions() {
                 <Divider />
                 <div className='flex flex-col gap-2'>
                     <PayWithFiat />
-                    <Button>Pay with Crypto</Button>
+                    <PayWithCryptoButton/>
                 </div>
             </CardBody>
         </Card>
@@ -62,7 +63,7 @@ function TicketActions() {
                 <div className='flex flex-col gap-2'>
 
                     <PayWithFiat />
-                    <Button>Pay with Crypto</Button>
+                    <PayWithCryptoButton/>
                 </div>
             </CardBody>
         </Card>
