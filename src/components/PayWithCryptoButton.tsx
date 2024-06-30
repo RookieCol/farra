@@ -1,12 +1,10 @@
 import useSmartAccountClient from '@/hooks/useGasless'
 import useSpendance from '@/hooks/useSpendance'
-import { Address } from '@coinbase/onchainkit/identity'
-import { toViem } from '@coinbase/waas-sdk-viem'
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
 import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
 import { Copy } from 'lucide-react'
 import { useState } from 'react'
-import { createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, http, parseEther, parseUnits, zeroAddress } from 'viem'
+import { Address, createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, http, parseEther, parseUnits, zeroAddress } from 'viem'
 import { baseSepolia } from 'viem/chains'
 
 function PayWithCryptoButton() {
@@ -22,11 +20,66 @@ function PayWithCryptoButton() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const handleClaimTicket = async () => {
-        const ABI = [
-            "function ownerOf(uint tokenId) view returns (address)",
-            "function balanceOf(address addr) view returns (uint)",
-            "function claim(address _receiver, uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data)",
-        ]
+        const ABI = [{
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_receiver",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_quantity",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_currency",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_pricePerToken",
+                    "type": "uint256"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "bytes32[]",
+                            "name": "proof",
+                            "type": "bytes32[]"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "quantityLimitPerWallet",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "pricePerToken",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "currency",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct IDrop.AllowlistProof",
+                    "name": "_allowlistProof",
+                    "type": "tuple"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "_data",
+                    "type": "bytes"
+                }
+            ],
+            "name": "claim",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        }] as const
         const contractAddress = '0xFf28015E395aD24EFAA1f0Ea33Bb409B043a0bea'
         const tx = await smartAccountClient?.sendTransaction({
             account: smartAccountClient.account,
@@ -36,27 +89,30 @@ function PayWithCryptoButton() {
                 abi: ABI,
                 functionName: 'claim',
                 args: [
-                    address,
-                    1,
-                    '1000000',
-                    [
-                        [
-                            "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    address!.address,
+                    1n,
+                    '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+                    100000n,
+
+                    {
+                        proof: [
+                            "0x0000000000000000000000000000000000000000000000000000000000000000" as Address
                         ],
-                        "100000",
-                        "1000000",
-                        "0x036cbd53842c5426634e7929541ec2318f3dcf7e"
-                    ]
+                        quantityLimitPerWallet: 1n,
+                        pricePerToken: 100000n,
+                        currency: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
+                    },
+                    '0x'
                 ]
             })
         })
-        console.debug(tx)(tx)
-        setHash(tx)
+        console.debug(tx)
+        setHash(tx!)
         return tx
 
     }
     const handleApproveToken = async () => {
-        s
+
         const contractAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
         const tx = await smartAccountClient?.sendTransaction({
             account: smartAccountClient.account,
@@ -81,18 +137,25 @@ function PayWithCryptoButton() {
             transport: http(),
         });
         setIsLoading(true)
-        if (spendance < 1) {
-            const approveHash = await handleApproveToken()
-            publicClient.waitForTransactionReceipt({ hash: approveHash!, confirmations: 1 })
-            const claimHash = await handleClaimTicket()
-            publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
-        } else {
-            const claimHash = await handleClaimTicket()
-            publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
-        }
+        try {
 
-        setIsLoading(false)
-        onOpen()
+            if (spendance < 1) {
+                const approveHash = await handleApproveToken()
+                publicClient.waitForTransactionReceipt({ hash: approveHash!, confirmations: 1 })
+                const claimHash = await handleClaimTicket()
+                publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
+            } else {
+                const claimHash = await handleClaimTicket()
+                publicClient.waitForTransactionReceipt({ hash: claimHash!, confirmations: 1 })
+            }
+
+
+            setIsLoading(false)
+            onOpen()
+        } catch (e) {
+            console.error(e)
+            setIsLoading(false)
+        }
     }
     const handleCloseModal = async (onClose: () => void) => {
         setIsEmailLoading(true)
