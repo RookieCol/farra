@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { Address, Avatar, Name } from '@coinbase/onchainkit/identity';
 
-const buttonStyles: React.CSSProperties = {
-  background: 'transparent',
-  border: '1px solid transparent',
-  boxSizing: 'border-box',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  fontFamily: 'Arial, sans-serif',
-  fontWeight: 'bold',
-  fontSize: 18,
-  gap: '8px',
-  backgroundColor: '#0052FF',
-  paddingLeft: 15,
-  paddingTop: 5,
-  color: 'white',
-  paddingBottom: 5,
-  cursor: 'pointer',
-  paddingRight: 30,
-  borderRadius: 10,
-};
+// const buttonStyles: React.CSSProperties = {
+//   background: 'transparent',
+//   border: '1px solid transparent',
+//   boxSizing: 'border-box',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'space-between',
+//   fontFamily: 'Arial, sans-serif',
+//   fontWeight: 'bold',
+//   fontSize: 18,
+//   gap: '8px',
+//   backgroundColor: '#0052FF',
+//   paddingLeft: 15,
+//   paddingTop: 5,
+//   color: 'white',
+//   paddingBottom: 5,
+//   cursor: 'pointer',
+//   paddingRight: 30,
+//   borderRadius: 10,
+// };
 
 enum ButtonText {
   CreateWallet = 'Create Wallet',

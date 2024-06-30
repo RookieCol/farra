@@ -1,10 +1,10 @@
 import useSmartAccountClient from '@/hooks/useGasless'
 import useSpendance from '@/hooks/useSpendance'
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
-import { Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
 import { Copy } from 'lucide-react'
 import { useState } from 'react'
-import { Address, createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, http, parseEther, parseUnits, zeroAddress } from 'viem'
+import { Address, createPublicClient, encodeFunctionData, erc20Abi, http, parseUnits, zeroAddress } from 'viem'
 import { baseSepolia } from 'viem/chains'
 
 function PayWithCryptoButton() {
@@ -159,7 +159,7 @@ function PayWithCryptoButton() {
     }
     const handleCloseModal = async (onClose: () => void) => {
         setIsEmailLoading(true)
-        await fetch('http://localhost:8080/send-ticket', {
+        await fetch('https://stripe-sessions-production.up.railway.app/send-ticket', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

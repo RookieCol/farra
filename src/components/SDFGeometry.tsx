@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { SDFGeometryGenerator } from 'three/examples/jsm/geometries/SDFGeometryGenerator';
 import Stats from 'stats.js';
 
 const SDFGeometry = () => {
-  const mountRef = useRef(null);
+  const mountRef = useRef<HTMLDivElement>(null);
   const settings = {
     res: 4,
     bounds: 1,
@@ -15,7 +15,7 @@ const SDFGeometry = () => {
   };
 
   useEffect(() => {
-    let renderer, stats, meshFromSDF, scene, camera, clock;
+    let renderer: THREE.WebGLRenderer, stats: Stats, meshFromSDF: THREE.Mesh, scene: THREE.Scene, camera: THREE.OrthographicCamera, clock: THREE.Clock;
 
     const shader = /* glsl */`
       float dist(vec3 p) {
@@ -67,11 +67,11 @@ const SDFGeometry = () => {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);
       renderer.setAnimationLoop(animate);
-      mountRef.current.appendChild(renderer.domElement);
+      mountRef.current?.appendChild(renderer.domElement);
 
       stats = new Stats();
       stats.dom.style.display = 'none'; // Hide the stats
-      mountRef.current.appendChild(stats.dom);
+      mountRef.current?.appendChild(stats.dom);
 
       window.addEventListener('resize', onWindowResize);
 
@@ -141,8 +141,8 @@ const SDFGeometry = () => {
     init();
 
     return () => {
-      mountRef.current.removeChild(renderer.domElement);
-      mountRef.current.removeChild(stats.dom);
+      mountRef.current?.removeChild(renderer.domElement);
+      mountRef.current?.removeChild(stats.dom);
       window.removeEventListener('resize', onWindowResize);
       renderer.dispose();
     };

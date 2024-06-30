@@ -1,10 +1,8 @@
 import { Button } from '@nextui-org/react'
-import React from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import { loadStripeOnramp } from '@stripe/crypto';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent, useDisclosure, ModalFooter } from "@nextui-org/react";
 import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
 
 
@@ -15,7 +13,8 @@ const stripeOnrampPromise = loadStripeOnramp(
 function
     PayWithFiat() {
     const [clientSecret, setClientSecret] = useState("");
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState({ status: '', tx_id: '' });
+    const [isLoading, setIsLoading] = useState(false)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { wallet } = useWalletContext()
 
@@ -53,13 +52,20 @@ function
     }, []);
 
 
-    const onChange = useCallback(({ session }: { session: { status: string } }) => {
+    const onChange = useCallback(({ session }: { session: { status: string, transaction_id: string } }) => {
         console.log("session", session);
-        setMessage(`OnrampSession is now in ${session.status} state.`);
+        setMessage({status: session.status, tx_id: session.transaction_id });
     }, []);
 
     console.log("clientSecret", clientSecret);
 
+    const handleCloseModal = async (onClose: () => void) => {
+        setIsLoading(true);
+        onClose();
+        setInterval(() => {
+            setIsLoading(false);
+        }, 1000);
+    }
 
     return (
         <>
@@ -75,10 +81,16 @@ function
                                             clientSecret={clientSecret}
                                             appearance={{ theme: "dark" }}
                                             onChange={onChange}
-                                            onReady={() => { }}
+                                            onReady={message}
                                         />
                                     )}
                                 </CryptoElements>
+                                <ModalFooter>
+
+                                <Button isLoading={isLoading} fullWidth color='primary' variant='flat' onPress={() => handleCloseModal(onClose)}>
+                                    Cheers!
+                                </Button>
+                            </ModalFooter>
                         </>
                     )}
                 </ModalContent>
