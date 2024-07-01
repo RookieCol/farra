@@ -14,14 +14,14 @@ function TicketSummary() {
                 <div className='flex flex-row gap-2 justify-start items-center'>
 
                     <Avatar isBordered size='sm' src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                    <p>Something</p>
+                    <p>Nouns DAO</p>
                 </div>
 
             </div>
             <div className='flex flex-col gap-2'>
                     <span className='font-bold'>Location</span>
                 <Divider />
-                <p>Rue du Marché aux Fromages 9, 1000 Bruxelles, Bélgica</p>
+                <p>Rue du Marché aux Fromages 9, 1000 Bruxelles, Belgium</p>
             </div>
             <div className='flex flex-col gap-2'>
 
