@@ -22,6 +22,7 @@ function
 
     useEffect(() => {
         // Fetches an onramp session and captures the client secret
+        if(!address?.address) return;
         fetch(
             "https://stripe-sessions-production.up.railway.app/create-onramp-session",
             {
@@ -49,7 +50,7 @@ function
             })
             .then((res) => res.json())
             .then((data) => setClientSecret(data.clientSecret));
-    }, []);
+    }, [address?.address]);
 
 
     const onChange = useCallback(({ session }: { session: { status: string, transaction_id: string } }) => {

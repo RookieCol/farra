@@ -172,6 +172,15 @@ function PayWithCryptoButton() {
         onClose();
     }
 
+
+    const copyHashToClipboard = () => {
+        navigator.clipboard.writeText(hash).then(() => {
+            console.log('Hash copied to clipboard');
+        }).catch(err => {
+            console.error('Error copying hash to clipboard', err);
+        });
+    };
+    
     return (
         <>
 
@@ -200,7 +209,7 @@ function PayWithCryptoButton() {
                                 </p>
                                 <Input className='email-input' value={email ?? undefined} onChange={(e) => setEmail(e.target.value)} variant='underlined' type="email" label="Email" placeholder="Enter your email" />
 
-                                <div className='flex gap-1 justify-center items-center cursor-pointer font-light'>
+                                <div  onClick={copyHashToClipboard} className='flex gap-1 justify-center items-center cursor-pointer font-light'>
                                     <Copy size='14' />
                                     <p className='text-inherit font-light'>
                                         {hash.slice(0, 6)}...{hash.slice(-4)}

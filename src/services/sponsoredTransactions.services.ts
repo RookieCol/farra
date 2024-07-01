@@ -35,6 +35,5 @@ export async function getSmartAccountClient() {
       sponsorUserOperation: cloudPaymaster.sponsorUserOperation,
     },
   });
-  console.debug(smartAccountClient.account.address)
-  return smartAccountClient;
+    return smartAccountClient;
 }
