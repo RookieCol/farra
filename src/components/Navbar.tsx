@@ -1,12 +1,12 @@
 import { CalendarDays, Compass, Menu, Ticket, X } from "lucide-react";
 import { useState } from "react";
-import { ConnectWalletButton } from "./ConnectWalletButton";
+import ConnectWalletButton from "./ConnectWalletButton";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <nav className="flex justify-between px-4 py-6 items-center bg-transparent">
+        <nav className="flex justify-between px-4 py-6 items-center bg-transparent relative z-10 overflow-visible">
             <h1 className="text-3xl font-bold font-orbitron">XXD</h1>
             <div className="hidden md:block">
                 <ResponsiveMenu />
