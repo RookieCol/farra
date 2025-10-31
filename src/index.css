@@ -186,9 +186,25 @@ body {
 @layer components {
   .ticket-container{
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 768px) {
+    .ticket-container {
+      grid-template-columns: 1fr 2fr;
+      align-items: start;
+      gap: 3rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .ticket-container {
+      grid-template-columns: 350px 1fr;
+    }
   }
   .bg-foreground-card{
     background-color: hsl(240, 5.88%, 20%) 
@@ -199,12 +215,27 @@ body {
   
   /* Fix for OnchainKit WalletDropdown positioning */
   [data-radix-popper-content-wrapper] {
-    z-index: 9999 !important;
+    z-index: 10001 !important;
   }
   
   /* Ensure dropdown appears below navbar */
   nav {
     position: relative;
-    z-index: 10;
+    z-index: 50;
+  }
+  
+  /* Ensure dropdown appears above NextUI cards */
+  [data-radix-portal] {
+    z-index: 10001 !important;
+  }
+  
+  /* Ensure Radix UI content appears above everything */
+  [data-radix-popper-content-wrapper] > * {
+    z-index: 10001 !important;
+  }
+  
+  /* Prevent NextUI cards from overlapping dropdown */
+  [data-slot="base"] {
+    z-index: 1 !important;
   }
 }
