@@ -1,118 +1,125 @@
-import { useState } from 'react';
-import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';
-import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
-import { Button } from '@nextui-org/react';
-import { Address, Avatar, Name } from '@coinbase/onchainkit/identity';
+import { useAccount, useDisconnect, useBalance } from 'wagmi';
+import { formatEther } from 'viem';
+import {
+  ConnectWallet,
+  Wallet,
+} from '@coinbase/onchainkit/wallet';
+import { Copy, LogOut, ChevronDown } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
-// const buttonStyles: React.CSSProperties = {
-//   background: 'transparent',
-//   border: '1px solid transparent',
-//   boxSizing: 'border-box',
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'space-between',
-//   fontFamily: 'Arial, sans-serif',
-//   fontWeight: 'bold',
-//   fontSize: 18,
-//   gap: '8px',
-//   backgroundColor: '#0052FF',
-//   paddingLeft: 15,
-//   paddingTop: 5,
-//   color: 'white',
-//   paddingBottom: 5,
-//   cursor: 'pointer',
-//   paddingRight: 30,
-//   borderRadius: 10,
-// };
-
-enum ButtonText {
-  CreateWallet = 'Create Wallet',
-  CreatingWallet = 'Creating Wallet...',
-  ConnectigWallet = 'Connecting Wallet...',
+function formatAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-function ConnectWalletButton() {
-  const { waas, user, isCreatingWallet, wallet, isLoggingIn } =
-    useWalletContext();
-  const [buttonText, setButtonText] = useState(ButtonText.CreateWallet);
-  const address = useEVMAddress(wallet);
+function getInitials(address: string): string {
+  return address.slice(2, 4).toUpperCase();
+}
 
-  if (!user)
+export default function ConnectWalletButton() {
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { data: balance } = useBalance({
+    address: address,
+  });
+
+  const copyAddress = async () => {
+    if (address) {
+      await navigator.clipboard.writeText(address);
+    }
+  };
+
+  if (!isConnected) {
     return (
-      <Button
-        variant='flat'
-        color='primary'
-        disabled={!waas || !!user || isLoggingIn}
-        isLoading={isLoggingIn}
-        onClick={async () => {
-          const user = await waas!.login();
-          console.debug('user', user);
-          if (user!.hasWallet) {
-            console.debug('restoring wallet');
-            setButtonText(ButtonText.ConnectigWallet);
-            user!.restoreFromHostedBackup!();
-          } else {
-            setButtonText(ButtonText.CreatingWallet);
-            console.debug('creating wallet');
-            user!.create();
-          }
-        }}
-        className='font-semibold'
-      >
-        <CoinbaseWalletLogo />
-        Login
-      </Button>
+      <Wallet>
+        <ConnectWallet>
+          <span className="text-sm font-medium">Connect Wallet</span>
+        </ConnectWallet>
+      </Wallet>
     );
-  if (wallet && address)
-    return (
-      <>
+  }
 
-        <Button
+  if (!address) {
+    return null;
+  }
 
-          variant='flat'
-          color='primary'
-          onClick={async () => {
-            await waas?.logout();
-          }}
-          disabled={!user}
-          className='font-semibold '
+  const ethBalance = balance ? parseFloat(formatEther(balance.value)).toFixed(4) : '0.0000';
 
-        >
-          <Avatar address='0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9' />
-          <div >
-            <Name className='text-inherit' address='0x838aD0EAE54F99F1926dA7C3b6bFbF617389B4D9' />
-            <Address className='text-inherit' address={address?.address} />
-          </div>
-
-
-        </Button>
-
-      </>
-    );
   return (
-    <Button
-      variant='flat'
-      color='primary'
-      disabled={!waas || !user || isCreatingWallet || !!wallet}
-      isLoading={isCreatingWallet}
-      className='font-semibold'
-
-      onClick={async () => {
-        // check if your user has a wallet, and restore it if they do!
-        if (user!.hasWallet) {
-          setButtonText(ButtonText.ConnectigWallet);
-          user!.restoreFromHostedBackup!();
-        } else {
-          setButtonText(ButtonText.CreatingWallet);
-          user!.create();
-        }
-      }}
-    >
-      <CoinbaseWalletLogo />
-
-      {buttonText}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "inline-flex items-center justify-center gap-2",
+            "h-9 px-3 py-2",
+            "rounded-md border border-gray-800 bg-transparent",
+            "text-sm font-medium text-white",
+            "hover:bg-gray-800/50 hover:border-gray-700",
+            "transition-colors",
+            "focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-900",
+            "disabled:pointer-events-none disabled:opacity-50"
+          )}
+        >
+          <Avatar className="h-6 w-6">
+            <AvatarFallback className="bg-gray-800 text-gray-300 text-xs">
+              {getInitials(address)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-sm">{formatAddress(address)}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64">
+        <div className="p-2 space-y-2">
+          <div className="flex items-center gap-2.5 px-2 py-1.5">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-gray-800 text-gray-300 text-xs">
+                {getInitials(address)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="text-sm font-medium truncate">
+                {formatAddress(address)}
+              </span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <code className="text-xs text-gray-500 font-mono truncate">
+                  {address}
+                </code>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    copyAddress();
+                  }}
+                  className="p-0.5 hover:bg-gray-800 rounded transition-colors shrink-0 opacity-60 hover:opacity-100"
+                  title="Copy address"
+                >
+                  <Copy size={10} className="text-gray-400" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <DropdownMenuSeparator />
+          <div className="flex items-center justify-between px-2 py-1">
+            <span className="text-xs text-gray-500">Balance</span>
+            <span className="text-sm font-medium">{ethBalance} ETH</span>
+          </div>
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => disconnect()}
+          className="text-red-400 focus:text-red-300 focus:bg-red-950/10 cursor-pointer"
+        >
+          <LogOut className="mr-2 h-3.5 w-3.5" />
+          <span className="text-sm">Disconnect</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
-
-export { ConnectWalletButton };
