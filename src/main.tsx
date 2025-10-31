@@ -1,22 +1,34 @@
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { WalletProvider } from "@coinbase/waas-sdk-web-react";
 import { NextUIProvider } from '@nextui-org/react';
 import '@fontsource-variable/orbitron';
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { base } from 'viem/chains';
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getConfig } from './wagmi';
 
-const PROJECT_ID = import.meta.env.VITE_PROJECT_ID;
+const config = getConfig();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <WalletProvider projectId={PROJECT_ID} verbose collectAndReportMetrics enableHostedBackups>
-    <OnchainKitProvider chain={base}>
-      <NextUIProvider>
-        <main className="dark text-foreground bg-background">
-          <App />
-        </main>
-      </NextUIProvider>
-    </OnchainKitProvider>
-  </WalletProvider>
+  <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
+      <OnchainKitProvider chain={base}>
+        <NextUIProvider>
+          <main className="dark text-foreground bg-background">
+            <App />
+          </main>
+        </NextUIProvider>
+      </OnchainKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 )
