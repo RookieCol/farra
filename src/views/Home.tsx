@@ -1,25 +1,18 @@
-
-// import { ConnectWalletButton } from '@/components/ConnectWalletButton';
-// import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import SDFGeometry from '@/components/SDFGeometry';
 
-// Make sure to call loadStripeOnramp outside of a component’s render to avoid
-// recreating the StripeOnramp object on every render.
-// This is your test publishable API key.
-// const stripeOnrampPromise = loadStripeOnramp(
-//   "pk_test_51Hjzj6H0FO59ioJ3X5qXYwDqGuRsSCWD8bMYJGthOw6Xi24DzlMBLIjFVZfLpeoPuk2SqB7uYZN0Lymci50P9P1400eUytv3lz"
-// );
-
-
 function Home() {
-
     return (
- 
-      <section className='grow flex flex-col justify-center items-center'>
-      <SDFGeometry />
-        <h1 className='text-xl font-orbitron font-semibold'>Tokenizing one event at a time</h1>
+      <section className='flex flex-col justify-center items-center px-4 py-8 md:py-12 w-full min-h-full'>
+        <div className='w-full max-w-4xl flex flex-col items-center gap-6 md:gap-8 my-auto'>
+          <div className='w-full max-w-md md:max-w-lg lg:max-w-xl aspect-square flex items-center justify-center flex-shrink-0'>
+            <SDFGeometry />
+          </div>
+          <h1 className='text-lg md:text-xl lg:text-2xl font-orbitron font-semibold text-center px-4 flex-shrink-0'>
+            Tokenizing one event at a time
+          </h1>
+        </div>
       </section>
-  )
+    )
 }
 
 export default Home

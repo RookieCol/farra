@@ -16,6 +16,7 @@ const SDFGeometry = () => {
 
   useEffect(() => {
     let renderer: THREE.WebGLRenderer, stats: Stats, meshFromSDF: THREE.Mesh, scene: THREE.Scene, camera: THREE.OrthographicCamera, clock: THREE.Clock;
+    let resizeObserver: ResizeObserver | null = null;
 
     const shader = /* glsl */`
       float dist(vec3 p) {
@@ -54,8 +55,11 @@ const SDFGeometry = () => {
     `;
 
     const init = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const container = mountRef.current;
+      if (!container) return;
+      
+      const w = container.clientWidth || window.innerWidth;
+      const h = container.clientHeight || window.innerHeight;
 
       camera = new THREE.OrthographicCamera(w / -2, w / 2, h / 2, h / -2, 0.01, 1600);
       camera.position.z = 1100;
@@ -65,7 +69,7 @@ const SDFGeometry = () => {
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);
+      renderer.setSize(w, h);
       renderer.setAnimationLoop(animate);
       mountRef.current?.appendChild(renderer.domElement);
 
@@ -74,6 +78,11 @@ const SDFGeometry = () => {
       mountRef.current?.appendChild(stats.dom);
 
       window.addEventListener('resize', onWindowResize);
+      // Also observe container resize
+      if (container) {
+        resizeObserver = new ResizeObserver(onWindowResize);
+        resizeObserver.observe(container);
+      }
 
       compile();
     };
@@ -90,7 +99,10 @@ const SDFGeometry = () => {
         meshFromSDF = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
         scene.add(meshFromSDF);
 
-        const scale = Math.min(window.innerWidth, window.innerHeight) / 2 * 0.66;
+        const container = mountRef.current;
+        const w = container?.clientWidth || window.innerWidth;
+        const h = container?.clientHeight || window.innerHeight;
+        const scale = Math.min(w, h) / 2 * 0.66;
         meshFromSDF.scale.set(scale, scale, scale);
 
         setMaterial();
@@ -112,8 +124,11 @@ const SDFGeometry = () => {
     };
 
     const onWindowResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const container = mountRef.current;
+      if (!container) return;
+      
+      const w = container.clientWidth;
+      const h = container.clientHeight;
 
       renderer.setSize(w, h);
 
@@ -123,6 +138,11 @@ const SDFGeometry = () => {
       camera.bottom = h / -2;
 
       camera.updateProjectionMatrix();
+      
+      if (meshFromSDF) {
+        const scale = Math.min(w, h) / 2 * 0.66;
+        meshFromSDF.scale.set(scale, scale, scale);
+      }
     };
 
     const render = () => {
@@ -141,14 +161,23 @@ const SDFGeometry = () => {
     init();
 
     return () => {
-      mountRef.current?.removeChild(renderer.domElement);
-      mountRef.current?.removeChild(stats.dom);
+      if (mountRef.current) {
+        if (renderer.domElement.parentNode === mountRef.current) {
+          mountRef.current.removeChild(renderer.domElement);
+        }
+        if (stats.dom.parentNode === mountRef.current) {
+          mountRef.current.removeChild(stats.dom);
+        }
+      }
       window.removeEventListener('resize', onWindowResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       renderer.dispose();
     };
   }, []);
 
-  return <div ref={mountRef} className="relative flex justify-center w-full h-[90%]" />;
+  return <div ref={mountRef} className="relative flex justify-center items-center w-full h-full min-h-[300px]" />;
 };
 
 export default SDFGeometry;
