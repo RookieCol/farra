@@ -1,6 +1,6 @@
 import useSmartAccountClient from '@/hooks/useGasless'
 import useSpendance from '@/hooks/useSpendance'
-import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
+import { useAccount } from 'wagmi'
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
 import { Copy } from 'lucide-react'
 import { useState } from 'react'
@@ -13,10 +13,8 @@ function PayWithCryptoButton() {
     const [email, setEmail] = useState<null | string>(null)
     const [isEmailLoading, setIsEmailLoading] = useState(false)
     const { smartAccountClient } = useSmartAccountClient()
-    const { wallet } = useWalletContext()
-
-    const address = useEVMAddress(wallet)
-    const { spendance } = useSpendance(address?.address ?? zeroAddress)
+    const { address } = useAccount()
+    const { spendance } = useSpendance(address ?? zeroAddress)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const handleClaimTicket = async () => {
@@ -81,15 +79,18 @@ function PayWithCryptoButton() {
             "type": "function"
         }] as const
         const contractAddress = '0xFf28015E395aD24EFAA1f0Ea33Bb409B043a0bea'
-        const tx = await smartAccountClient?.sendTransaction({
-            account: smartAccountClient.account,
+        if (!smartAccountClient?.account) {
+            throw new Error('Smart account not initialized');
+        }
+        const tx = await smartAccountClient.sendTransaction({
+            account: smartAccountClient.account as any,
             to: contractAddress,
             value: BigInt(0),
             data: encodeFunctionData({
                 abi: ABI,
                 functionName: 'claim',
-                args: [
-                    address!.address,
+                    args: [
+                        address!,
                     1n,
                     '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
                     100000n,
@@ -114,8 +115,11 @@ function PayWithCryptoButton() {
     const handleApproveToken = async () => {
 
         const contractAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
-        const tx = await smartAccountClient?.sendTransaction({
-            account: smartAccountClient.account,
+        if (!smartAccountClient?.account) {
+            throw new Error('Smart account not initialized');
+        }
+        const tx = await smartAccountClient.sendTransaction({
+            account: smartAccountClient.account as any,
             to: contractAddress,
             value: BigInt(0),
             data: encodeFunctionData({

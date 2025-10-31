@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { CryptoElements, OnrampElement } from '@/components/StripeFiat';
 import { loadStripeOnramp } from '@stripe/crypto';
 import { Modal, ModalContent, useDisclosure, ModalFooter } from "@nextui-org/react";
-import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react';
+import { useAccount } from 'wagmi'
 
 
 const stripeOnrampPromise = loadStripeOnramp(
@@ -16,21 +16,19 @@ function
     const [message, setMessage] = useState({ status: '', tx_id: '' });
     const [isLoading, setIsLoading] = useState(false)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { wallet } = useWalletContext()
-
-    const address = useEVMAddress(wallet)
+    const { address } = useAccount()
 
     useEffect(() => {
         // Fetches an onramp session and captures the client secret
-        if(!address?.address) return;
+        if(!address) return;
         fetch(
             "https://stripe-sessions-production.up.railway.app/create-onramp-session",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    transaction_details: {
-                        wallet_address: address?.address,
+                    body: JSON.stringify({
+                        transaction_details: {
+                            wallet_address: address,
                         destination_currency: "usdc",
                         destination_currencies: ["usdc", "eth"],
                         destination_exchange_amount: "13.37",
@@ -50,7 +48,7 @@ function
             })
             .then((res) => res.json())
             .then((data) => setClientSecret(data.clientSecret));
-    }, [address?.address]);
+    }, [address]);
 
 
     const onChange = useCallback(({ session }: { session: { status: string, transaction_id: string } }) => {

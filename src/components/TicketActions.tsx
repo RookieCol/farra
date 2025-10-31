@@ -1,14 +1,13 @@
 import useUserHasNouns from '@/hooks/useUserHasNouns'
-import { useEVMAddress, useWalletContext } from '@coinbase/waas-sdk-web-react'
-import { Button, Card, CardBody, CardHeader, Chip, Divider } from '@nextui-org/react'
+import { useAccount } from 'wagmi'
+import { Card, CardBody, CardHeader, Chip, Divider } from '@nextui-org/react'
 import { zeroAddress } from 'viem'
 import PayWithFiat from './PayWithFiatButton'
 import PayWithCryptoButton from './PayWithCryptoButton'
 
 function TicketActions() {
-    const { wallet } = useWalletContext()
-    const address = useEVMAddress(wallet)
-    const { userHasNouns } = useUserHasNouns(address?.address ?? zeroAddress)
+    const { address } = useAccount()
+    const { userHasNouns } = useUserHasNouns(address ?? zeroAddress)
     if (userHasNouns) return (
         <Card fullWidth>
             <CardHeader className='bg-foreground-card flex justify-between items-center'>
