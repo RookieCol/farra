@@ -2,6 +2,156 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+  }
+ 
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 0.15s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+  }
+  
+  .animate-out {
+    animation-duration: 0.15s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+  }
+  
+  .fade-in-0 {
+    animation-name: fade-in;
+    --tw-enter-opacity: initial;
+  }
+  
+  .fade-out-0 {
+    animation-name: fade-out;
+    --tw-exit-opacity: initial;
+  }
+  
+  .zoom-in-95 {
+    animation-name: zoom-in;
+    --tw-enter-scale: 0.95;
+  }
+  
+  .zoom-out-95 {
+    animation-name: zoom-out;
+    --tw-exit-scale: 0.95;
+  }
+  
+  .slide-in-from-top-2 {
+    animation-name: slide-in-from-top;
+    --tw-enter-translate-y: -0.5rem;
+  }
+  
+  .slide-in-from-bottom-2 {
+    animation-name: slide-in-from-bottom;
+    --tw-enter-translate-y: 0.5rem;
+  }
+  
+  .slide-in-from-left-2 {
+    animation-name: slide-in-from-left;
+    --tw-enter-translate-x: -0.5rem;
+  }
+  
+  .slide-in-from-right-2 {
+    animation-name: slide-in-from-right;
+    --tw-enter-translate-x: 0.5rem;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--tw-enter-scale, 0.95));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(var(--tw-exit-scale, 0.95));
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(var(--tw-enter-translate-y, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(var(--tw-enter-translate-y, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(var(--tw-enter-translate-x, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(var(--tw-enter-translate-x, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -45,5 +195,16 @@ body {
   }
   .email-input input {
     color: white !important;
+  }
+  
+  /* Fix for OnchainKit WalletDropdown positioning */
+  [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+  }
+  
+  /* Ensure dropdown appears below navbar */
+  nav {
+    position: relative;
+    z-index: 10;
   }
 }
